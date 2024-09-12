@@ -32,5 +32,26 @@ withDb(() => {
 
       expect(body).toStrictEqual(bodyExpected);
     });
+
+    test("Should return and error when the pipeline is bad formatted", async () => {
+      const data = {
+        database: "test",
+        collection: "users",
+        pipeline: [
+          {
+            $nonExistingStage: {},
+          },
+        ],
+      };
+
+      const collection = client.db(data.database).collection(data.collection);
+
+      await collection.insertMany(users);
+
+      const { body } = await requester({ data, url: endPoint });
+
+      expect(body.code).toBe(40324);
+      expect(body.errmsg).toContain("Unrecognized pipeline stage name");
+    });
   });
 });
