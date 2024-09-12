@@ -1,9 +1,9 @@
+import { envs } from "./envs";
+
 import app from "./app";
 
 (async () => {
-  const port = process.env.SERVER_PORT ?? 8080;
-
-  app.listen(port, () =>
-    console.log(`TypeScript Data API running on port ${port}`)
+  app.listen(envs.SERVER_PORT, () =>
+    console.log(`TypeScript Data API running on port ${envs.SERVER_PORT}`)
   );
 })().catch(console.error);
