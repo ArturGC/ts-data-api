@@ -1,12 +1,10 @@
 import { MongoClient } from "mongodb";
+import { envs } from "../envs";
 
-export const client = new MongoClient(
-  process.env.MDB_URI ?? "mongodb://127.0.0.1:27017",
-  {
-    appName: "TS Data API",
-    compressors: ["zstd"],
-    ignoreUndefined: true,
-    readPreference: "primaryPreferred",
-    writeConcern: { journal: true, w: "majority" },
-  }
-);
+export const client = new MongoClient(envs.MDB_URI, {
+  appName: "TS Data API",
+  compressors: ["zstd"],
+  ignoreUndefined: true,
+  readPreference: "primaryPreferred",
+  writeConcern: { journal: true, w: "majority" },
+});

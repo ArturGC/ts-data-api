@@ -7,6 +7,7 @@ import { routerCustom, routerDefaults } from "./routes";
 const app = h3.createApp({
   onBeforeResponse: M.bodySerializer,
   onError: M.errorHandler,
+  onRequest: M.isAuthenticated,
 });
 
 app.use(routerCustom);

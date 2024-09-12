@@ -38,9 +38,13 @@ export const requester: Requester = async (args) => {
   const { parser } = getBodyParser(contentType);
   const { serializer } = getBodySerializer(contentType);
 
+  const token =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MjYxNzk3NDB9.TVPIeTj444jMifkd3r_T6jIACwnC86OhtsSjSYt7yV0";
+
   return request(app)
     ["post"](args.url)
     .set("content-type", contentType)
+    .set("Authorization", `Bearer ${token}`)
     .send(serializer(args.data))
     .buffer(true)
     .parse((res, cb) => {
