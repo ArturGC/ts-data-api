@@ -3,7 +3,6 @@ import { z } from "zod";
 
 import * as M from "../../middlewares";
 import { client } from "../../mdb";
-import { MongoServerError } from "mongodb";
 
 const BodySchema = z.object({
   database: z.string(),

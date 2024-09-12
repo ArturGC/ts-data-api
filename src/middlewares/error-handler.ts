@@ -1,7 +1,7 @@
 import { H3Error, type H3Event, setResponseStatus } from "h3";
 
 import { bodySerializer } from "./body-serializer";
-import { Document, MongoInvalidArgumentError, MongoServerError } from "mongodb";
+import { MongoInvalidArgumentError, MongoServerError } from "mongodb";
 
 type ErrorHandler = (error: H3Error, event: H3Event) => unknown;
 
