@@ -15,24 +15,16 @@ withDb(() => {
         collection: "users",
         operations: [
           {
-            insertOne: {
-              document: user,
-            },
+            insertOne: { document: user },
           },
           {
             updateOne: {
-              filter: {
-                _id: user._id,
-              },
-              update: {
-                $inc: { points: 10 },
-              },
+              filter: { _id: user._id },
+              update: { $inc: { points: 10 } },
             },
           },
         ],
-        options: {
-          ordered: true,
-        },
+        options: { ordered: true },
       };
 
       const collection = client.db(data.database).collection(data.collection);
@@ -46,6 +38,23 @@ withDb(() => {
       const userAfter = await collection.findOne({ _id: user._id });
 
       expect(userAfter!.points).toBe(20);
+    });
+
+    test("Should return an error when a invalid bulk write operations is provided", async () => {
+      const data = {
+        database: "test",
+        collection: "users",
+        operations: [
+          {
+            insertSomething: { document: user },
+          },
+        ],
+      };
+
+      const { body } = await requester({ data, url: endPoint });
+
+      expect(body.code).toBe(null);
+      expect(body.errmsg).toContain("bulkWrite only supports");
     });
   });
 });

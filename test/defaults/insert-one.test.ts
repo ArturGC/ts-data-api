@@ -30,5 +30,24 @@ withDb(() => {
       const countAfter = await collection.countDocuments({});
       expect(countAfter).toBe(1);
     });
+
+    test("Should return an error when inserting one document with an existing _id", async () => {
+      const data = {
+        database: "test",
+        collection: "users",
+        document: user,
+      };
+      const collection = client.db(data.database).collection(data.collection);
+
+      await collection.insertOne(user);
+
+      const { body } = await requester({
+        data,
+        url: endPoint,
+      });
+
+      expect(body.code).toBe(11000);
+      expect(body.errmsg).toContain("E11000 duplicate key error collection");
+    });
   });
 });

@@ -24,5 +24,24 @@ withDb(() => {
 
       expect(body).toBe(2);
     });
+
+    test("Should return an error when a invalid filter is provided to count documents", async () => {
+      const data = {
+        database: "test",
+        collection: "users",
+        filter: {
+          points: { $lessThan: 30 },
+        },
+      };
+
+      const collection = client.db(data.database).collection(data.collection);
+
+      await collection.insertMany(users);
+
+      const { body } = await requester({ data, url: endPoint });
+
+      expect(body.code).toBe(2);
+      expect(body.errmsg).toContain("unknown operator");
+    });
   });
 });
