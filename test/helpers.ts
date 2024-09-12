@@ -3,6 +3,7 @@ import request from "supertest";
 
 import app from "../src/app";
 import { client } from "../src/mdb";
+import { getBodyParser, getBodySerializer } from "../src/utils";
 
 export async function cleanAllCollections() {
   const collections = await client.db("test").collections();
@@ -27,20 +28,25 @@ export function withDb(test: () => void): void {
 }
 
 type Requester = (args: {
+  contentType?: "application/json" | "application/ejson";
   data?: object;
   url: string;
 }) => Promise<request.Response>;
 
-export const requester: Requester = async ({ data, url }) => {
+export const requester: Requester = async (args) => {
+  const contentType = args.contentType ?? "application/ejson";
+  const { parser } = getBodyParser(contentType);
+  const { serializer } = getBodySerializer(contentType);
+
   return request(app)
-    ["post"](url)
-    .set("content-type", "application/ejson")
-    .send(EJSON.stringify(data))
+    ["post"](args.url)
+    .set("content-type", contentType)
+    .send(serializer(args.data))
     .buffer(true)
     .parse((res, cb) => {
       let data = Buffer.from("");
 
       res.on("data", (chunk) => (data = Buffer.concat([data, chunk])));
-      res.on("end", () => cb(null, EJSON.parse(data as any)));
+      res.on("end", () => cb(null, parser(data as any)));
     });
 };

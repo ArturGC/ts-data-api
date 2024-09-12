@@ -1,6 +1,6 @@
-import { EJSON } from "bson";
 import * as h3 from "h3";
 import { type z } from "zod";
+import { getBodyParser } from "../utils";
 
 export const Errors = {
   noBody: () => {
@@ -28,7 +28,8 @@ export const bodyHandler: BodyHandler = async ({ event, schema }) => {
 
   if (rawBody == null) throw Errors.noBody();
 
-  const body = EJSON.parse(rawBody);
+  const { parser } = getBodyParser(h3.getHeader(event, "content-type"));
+  const body = parser(rawBody);
   const result = schema.safeParse(body);
 
   if (result.success) return result.data;
