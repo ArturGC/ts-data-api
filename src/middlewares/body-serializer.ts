@@ -1,5 +1,5 @@
-import { EJSON } from "bson";
 import * as h3 from "h3";
+import { getBodySerializer } from "../utils";
 
 type BodySerializer = h3._ResponseMiddleware<
   h3.EventHandlerRequest,
@@ -7,7 +7,8 @@ type BodySerializer = h3._ResponseMiddleware<
 >;
 
 export const bodySerializer: BodySerializer = async (event, { body }) => {
-  const bodySerialized = EJSON.stringify(body);
+  const { serializer } = getBodySerializer(h3.getHeader(event, "content-type"));
+  const bodySerialized = serializer(body);
 
   await h3.send(event, bodySerialized, "application/ejson");
 };
